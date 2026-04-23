@@ -15,16 +15,16 @@
         android:elevation="8dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-black"
-            android:text="KFC Delivery"
+            android:text="My Profile"
             android:textColor="#FFFFFF"
-            android:textSize="22sp" />
+            android:textSize="24sp"
+            android:fontFamily="sans-serif-black" />
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
@@ -36,88 +36,85 @@
         app:cardBackgroundColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/headerLayout"
-        app:layout_constraintVertical_bias="0.3">
+        app:layout_constraintVertical_bias="0.2">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
             android:padding="32dp">
 
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:src="@drawable/kfc_logo"
                 android:layout_marginBottom="24dp"
-                android:contentDescription="KFC Logo" />
+                android:src="@drawable/ic_profile"
+                app:tint="#D1D1D1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order Status"
+                android:text="Account Details"
                 android:textColor="#E4002B"
-                android:textSize="28sp"
+                android:textSize="22sp"
                 android:fontFamily="sans-serif-black"
-                android:layout_marginBottom="12dp" />
-
-            <TextView
-                android:id="@+id/tvLiveStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Preparing Order... (Status updates automatically)"
-                android:textColor="#555555"
-                android:textSize="16sp"
-                android:gravity="center"
                 android:layout_marginBottom="24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Order ID: #KFC-8901"
-                android:textColor="#222222"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:text="Name"
+                android:textColor="#999999"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
 
             <TextView
-                android:id="@+id/tvOrderAmount"
+                android:id="@+id/tvProfileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Amount Paid: ₱ 0.00"
+                android:text="Guest User"
                 android:textColor="#222222"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginBottom="16dp" />
 
             <TextView
-                android:id="@+id/tvOrderPayment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Method: Cash on Delivery"
-                android:textColor="#555555"
-                android:textSize="16sp"
+                android:text="Email"
+                android:textColor="#999999"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tvProfileEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user@example.com"
+                android:textColor="#222222"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 android:layout_marginBottom="32dp" />
 
             <Button
-                android:id="@+id/btnLeaveFeedback"
+                android:id="@+id/btnBackToDashboard"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginBottom="16dp"
                 android:backgroundTint="#F5F5F5"
-                android:text="Leave Feedback"
+                android:text="Back to Dashboard"
                 android:textAllCaps="false"
                 android:textColor="#222222"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:visibility="gone" />
+                android:textStyle="bold" />
 
             <Button
-                android:id="@+id/btnBackToMenu"
+                android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:backgroundTint="#E4002B"
-                android:text="Back to Menu"
+                android:text="Log Out"
                 android:textAllCaps="false"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"

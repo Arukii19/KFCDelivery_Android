@@ -4,13 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#F9F9FB">
 
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#E4002B"
+        android:elevation="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp"
@@ -57,28 +58,166 @@
                 android:layout_marginBottom="12dp"/>
 
             <LinearLayout
+                android:id="@+id/layoutCartItems"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_marginBottom="8dp">
 
-                <TextView
-                    android:id="@+id/tvOrderItems"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                <!-- Chicken Row -->
+                <LinearLayout
+                    android:id="@+id/rowChicken"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="1x Chicken\n2x Large Fries"
-                    android:textColor="#555555"
-                    android:textSize="16sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Chicken (₱ 85.00)"
+                        android:textColor="#555555"
+                        android:textSize="16sp" />
+                    <Button
+                        android:id="@+id/btnMinusCartChicken"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#CCCCCC"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="-"
+                        android:textColor="#000000" />
+                    <TextView
+                        android:id="@+id/tvCartQtyChicken"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/btnAddCartChicken"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#E4002B"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="+"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+
+                <!-- Fries Row -->
+                <LinearLayout
+                    android:id="@+id/rowFries"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Large Fries (₱ 50.00)"
+                        android:textColor="#555555"
+                        android:textSize="16sp" />
+                    <Button
+                        android:id="@+id/btnMinusCartFries"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#CCCCCC"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="-"
+                        android:textColor="#000000" />
+                    <TextView
+                        android:id="@+id/tvCartQtyFries"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/btnAddCartFries"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#E4002B"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="+"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+
+                <!-- Drink Row -->
+                <LinearLayout
+                    android:id="@+id/rowDrink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Large Drink (₱ 45.00)"
+                        android:textColor="#555555"
+                        android:textSize="16sp" />
+                    <Button
+                        android:id="@+id/btnMinusCartDrink"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#CCCCCC"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="-"
+                        android:textColor="#000000" />
+                    <TextView
+                        android:id="@+id/tvCartQtyDrink"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/btnAddCartDrink"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#E4002B"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="+"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/tvOrderPrices"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvEmptyCart"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:text="₱ 18.50\n₱ 8.00"
-                    android:textColor="#000000"
-                    android:textSize="16sp" />
+                    android:gravity="center"
+                    android:text="No items in cart"
+                    android:textColor="#999999"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
             <View
@@ -102,7 +241,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginBottom="16dp"
-                android:background="#F5F5F5"
+                android:background="@drawable/bg_rounded_input"
                 android:hint="Delivery Address"
                 android:inputType="textPostalAddress"
                 android:paddingStart="16dp"
@@ -115,13 +254,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginBottom="16dp"
-                android:background="#F5F5F5"
+                android:background="@drawable/bg_rounded_input"
                 android:hint="Delivery Instructions (Optional)"
                 android:inputType="text"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="#000000"
                 android:textColorHint="#999999" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Payment Method"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"/>
+
+            <RadioGroup
+                android:id="@+id/rgPaymentMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RadioButton
+                    android:id="@+id/rbCOD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cash on Delivery (COD)"
+                    android:textSize="16sp"
+                    android:textColor="#000000"
+                    android:checked="true" />
+
+                <RadioButton
+                    android:id="@+id/rbOnline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Online Payment"
+                    android:textSize="16sp"
+                    android:textColor="#000000" />
+            </RadioGroup>
 
         </LinearLayout>
     </ScrollView>
@@ -130,10 +303,10 @@
         android:id="@+id/footerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FAFAFA"
-        android:elevation="8dp"
+        android:background="#FFFFFF"
+        android:elevation="16dp"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout

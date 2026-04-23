@@ -8,61 +8,67 @@ import java.util.Locale
 
 class DashboardActivity : ComponentActivity() {
 
-    private val CHICKEN_PRICE = 18.50
-    private val FRIES_PRICE = 4.00
-    private val DRINK_PRICE = 2.50
-
-    private var qtyChicken = 0
-    private var qtyFries = 0
-    private var qtyDrink = 0
-    private var currentTotal = 0.0
-
-    private lateinit var tvQuantityChicken: TextView
-    private lateinit var tvQuantityFries: TextView
-    private lateinit var tvQuantityDrink: TextView
     private lateinit var tvTotalPrice: TextView
+    private lateinit var menuAdapter: MenuAdapter
+    private val menuItems = mutableListOf<MenuItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
 
-        tvQuantityChicken = findViewById(R.id.tvQuantityChicken)
-        tvQuantityFries = findViewById(R.id.tvQuantityFries)
-        tvQuantityDrink = findViewById(R.id.tvQuantityDrink)
         tvTotalPrice = findViewById(R.id.tvTotalPrice)
 
-        findViewById<Button>(R.id.btnAddChicken).setOnClickListener {
-            qtyChicken++
-            updateUI()
-        }
-        findViewById<Button>(R.id.btnMinusChicken).setOnClickListener {
-            if (qtyChicken > 0) qtyChicken--
-            updateUI()
-        }
-
-        findViewById<Button>(R.id.btnAddFries).setOnClickListener {
-            qtyFries++
-            updateUI()
-        }
-        findViewById<Button>(R.id.btnMinusFries).setOnClickListener {
-            if (qtyFries > 0) qtyFries--
-            updateUI()
+        val tvMenuTitle = findViewById<TextView>(R.id.tvMenuTitle)
+        var userName = intent.getStringExtra("USER_NAME")
+        var userEmail = intent.getStringExtra("USER_EMAIL")
+        
+        val sharedPref = getSharedPreferences("KFCAppPrefs", android.content.Context.MODE_PRIVATE)
+        if (userName != null && userEmail != null) {
+            sharedPref.edit().putString("SESSION_USER_NAME", userName).putString("SESSION_USER_EMAIL", userEmail).apply()
+        } else {
+            userName = sharedPref.getString("SESSION_USER_NAME", "")
+            userEmail = sharedPref.getString("SESSION_USER_EMAIL", "")
         }
 
-        findViewById<Button>(R.id.btnAddDrink).setOnClickListener {
-            qtyDrink++
-            updateUI()
+        if (!userName.isNullOrEmpty()) {
+            tvMenuTitle.text = "Welcome, $userName!"
         }
-        findViewById<Button>(R.id.btnMinusDrink).setOnClickListener {
-            if (qtyDrink > 0) qtyDrink--
-            updateUI()
+
+        findViewById<android.widget.ImageView>(R.id.btnProfile).setOnClickListener {
+            val intent = android.content.Intent(this, ProfileActivity::class.java)
+            intent.putExtra("USER_NAME", userName)
+            intent.putExtra("USER_EMAIL", userEmail)
+            startActivity(intent)
         }
+        
+        // Initialize Data
+        menuItems.add(MenuItem("chicken", "Chicken", "Our signature 11 herbs and spices crispy fried chicken bucket.", 85.00, R.drawable.kfc_chicken))
+        menuItems.add(MenuItem("fries", "Large Fries", "Golden, crispy, and perfectly salted french fries.", 50.00, R.drawable.kfc_fries))
+        menuItems.add(MenuItem("drink", "Large Drink", "Refreshing ice-cold fountain drink of your choice.", 45.00, R.drawable.kfc_drinks))
+
+        val lvMenu = findViewById<android.widget.ListView>(R.id.lvMenu)
+        menuAdapter = MenuAdapter(this, R.layout.item_menu, menuItems, 
+            onTotalChanged = {
+                updateUI()
+            },
+            onImageClick = { item ->
+                showItemDetailsDialog(item.name, item.description)
+            }
+        )
+        lvMenu.adapter = menuAdapter
 
         findViewById<Button>(R.id.btnCheckout).setOnClickListener {
+            val qtyChicken = menuItems.find { it.id == "chicken" }?.quantity ?: 0
+            val qtyFries = menuItems.find { it.id == "fries" }?.quantity ?: 0
+            val qtyDrink = menuItems.find { it.id == "drink" }?.quantity ?: 0
+
             if (qtyChicken == 0 && qtyFries == 0 && qtyDrink == 0) {
                 android.widget.Toast.makeText(this, "no food item selected", android.widget.Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            
+            val currentTotal = menuItems.sumOf { it.price * it.quantity }
+
             val intent = android.content.Intent(this, CartActivity::class.java)
             intent.putExtra("QTY_CHICKEN", qtyChicken)
             intent.putExtra("QTY_FRIES", qtyFries)
@@ -70,15 +76,22 @@ class DashboardActivity : ComponentActivity() {
             intent.putExtra("TOTAL_PRICE", currentTotal)
             startActivity(intent)
         }
+        
+        updateUI()
     }
 
     private fun updateUI() {
-        tvQuantityChicken.text = qtyChicken.toString()
-        tvQuantityFries.text = qtyFries.toString()
-        tvQuantityDrink.text = qtyDrink.toString()
+        val currentTotal = menuItems.sumOf { it.price * it.quantity }
+        tvTotalPrice.text = String.format(Locale.getDefault(), "Php %.2f", currentTotal)
+    }
 
-        currentTotal = (qtyChicken * CHICKEN_PRICE) + (qtyFries * FRIES_PRICE) + (qtyDrink * DRINK_PRICE)
-
-        tvTotalPrice.text = String.format(Locale.getDefault(), "₱ %.2f", currentTotal)
+    private fun showItemDetailsDialog(title: String, description: String) {
+        android.app.AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(description)
+            .setPositiveButton("Close") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 }

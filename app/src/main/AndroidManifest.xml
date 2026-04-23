@@ -43,6 +43,16 @@
             android:name=".OrderStatusActivity"
             android:exported="false"
             android:theme="@style/Theme.KFCDelivery" />
+
+        <activity
+            android:name=".FeedbackActivity"
+            android:exported="false"
+            android:theme="@style/Theme.KFCDelivery" />
+
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.KFCDelivery" />
     </application>
 
 </manifest>
