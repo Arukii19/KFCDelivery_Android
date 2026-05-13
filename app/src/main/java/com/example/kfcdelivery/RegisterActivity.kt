@@ -24,21 +24,34 @@ class RegisterActivity : ComponentActivity() {
         btnRegister.setOnClickListener {
             val email = emailEditText.text.toString()
             val firstName = firstNameEditText.text.toString()
+            val lastName = lastNameEditText.text.toString()
             val password = passwordEditText.text.toString()
 
-            // Save the user's first name and password locally using the email as a key
-            val sharedPref = getSharedPreferences("KFCAppPrefs", android.content.Context.MODE_PRIVATE)
-            with (sharedPref.edit()) {
-                putString(email, firstName)
-                putString("PWD_$email", password)
-                apply()
+            if (email.isEmpty() || firstName.isEmpty() || password.isEmpty()) {
+                android.widget.Toast.makeText(this, "Please fill all required fields", android.widget.Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("REGISTERED_EMAIL", email)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
+            val userMap = hashMapOf(
+                "firstName" to firstName,
+                "lastName" to lastName,
+                "email" to email,
+                "password" to password
+            )
+
+            val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            db.collection("users").document(email)
+                .set(userMap)
+                .addOnSuccessListener {
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("REGISTERED_EMAIL", email)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+                .addOnFailureListener { e ->
+                    android.widget.Toast.makeText(this, "Registration Failed: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }

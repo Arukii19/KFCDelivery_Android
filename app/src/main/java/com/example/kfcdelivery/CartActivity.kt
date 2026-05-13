@@ -125,12 +125,33 @@ class CartActivity : ComponentActivity() {
             } else {
                 "Cash on Delivery (COD)"
             }
-            val statusIntent = Intent(this, OrderStatusActivity::class.java)
             val finalTotal = (qtyChicken * 85.00) + (qtyBurger * 90.00) + (qtyFries * 50.00) + (qtyDrink * 45.00) + (qtySundae * 35.00)
-            statusIntent.putExtra("FINAL_TOTAL", finalTotal)
-            statusIntent.putExtra("PAYMENT_METHOD", paymentMethod)
-            startActivity(statusIntent)
-            finish()
+
+            val orderMap = hashMapOf(
+                "qtyChicken" to qtyChicken,
+                "qtyBurger" to qtyBurger,
+                "qtyFries" to qtyFries,
+                "qtyDrink" to qtyDrink,
+                "qtySundae" to qtySundae,
+                "totalPrice" to finalTotal,
+                "address" to etLocation.text.toString(),
+                "paymentMethod" to paymentMethod,
+                "status" to "Pending",
+                "timestamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+            )
+
+            val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            db.collection("orders").add(orderMap)
+                .addOnSuccessListener {
+                    val statusIntent = Intent(this, OrderStatusActivity::class.java)
+                    statusIntent.putExtra("FINAL_TOTAL", finalTotal)
+                    statusIntent.putExtra("PAYMENT_METHOD", paymentMethod)
+                    startActivity(statusIntent)
+                    finish()
+                }
+                .addOnFailureListener { e ->
+                    android.widget.Toast.makeText(this, "Order failed to save: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                }
         }
 
         updateCartUI()

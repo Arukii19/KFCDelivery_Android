@@ -32,23 +32,33 @@ class MainActivity : ComponentActivity() {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
             
-            val sharedPref = getSharedPreferences("KFCAppPrefs", android.content.Context.MODE_PRIVATE)
-            val savedPassword = sharedPref.getString("PWD_$email", null)
-
-            // Validate password if one was saved for this email
-            if (savedPassword != null && savedPassword != password) {
-                android.widget.Toast.makeText(this, "Invalid Password", android.widget.Toast.LENGTH_SHORT).show()
+            if (email.isEmpty() || password.isEmpty()) {
+                android.widget.Toast.makeText(this, "Please enter email and password", android.widget.Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            
-            // Retrieve the registered name if it exists, otherwise fallback to the email username
-            val fallbackName = email.substringBefore("@")
-            val savedName = sharedPref.getString(email, fallbackName)
-            
-            val intent = Intent(this, DashboardActivity::class.java)
-            intent.putExtra("USER_NAME", savedName)
-            intent.putExtra("USER_EMAIL", email)
-            startActivity(intent)
+
+            val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            db.collection("users").document(email).get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val savedPassword = document.getString("password")
+                        if (savedPassword == password) {
+                            val savedName = document.getString("firstName") ?: email.substringBefore("@")
+                            
+                            val intent = Intent(this, DashboardActivity::class.java)
+                            intent.putExtra("USER_NAME", savedName)
+                            intent.putExtra("USER_EMAIL", email)
+                            startActivity(intent)
+                        } else {
+                            android.widget.Toast.makeText(this, "Invalid Password", android.widget.Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        android.widget.Toast.makeText(this, "User not found. Please register.", android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                }
+                .addOnFailureListener { e ->
+                    android.widget.Toast.makeText(this, "Login failed: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }
