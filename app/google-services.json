@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1023191444955",
+    "project_id": "kfcdelivery-b0bf1",
+    "storage_bucket": "kfcdelivery-b0bf1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1023191444955:android:1987fa5016ffc1b57ecbfe",
+        "android_client_info": {
+          "package_name": "com.example.kfcdelivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDS6E--ti9rYtUMCTKKY8uZ5KOtcLN2pKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

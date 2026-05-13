@@ -19,8 +19,10 @@ class CartActivity : ComponentActivity() {
         }
 
         var qtyChicken = intent.getIntExtra("QTY_CHICKEN", 0)
+        var qtyBurger = intent.getIntExtra("QTY_BURGER", 0)
         var qtyFries = intent.getIntExtra("QTY_FRIES", 0)
         var qtyDrink = intent.getIntExtra("QTY_DRINK", 0)
+        var qtySundae = intent.getIntExtra("QTY_SUNDAE", 0)
 
         val btnConfirmOrder = findViewById<Button>(R.id.btnConfirmOrder)
         val rgPaymentMethod = findViewById<android.widget.RadioGroup>(R.id.rgPaymentMethod)
@@ -28,23 +30,31 @@ class CartActivity : ComponentActivity() {
         val etLocation = findViewById<android.widget.EditText>(R.id.etLocation)
 
         val rowChicken = findViewById<android.widget.LinearLayout>(R.id.rowChicken)
+        val rowBurger = findViewById<android.widget.LinearLayout>(R.id.rowBurger)
         val rowFries = findViewById<android.widget.LinearLayout>(R.id.rowFries)
         val rowDrink = findViewById<android.widget.LinearLayout>(R.id.rowDrink)
+        val rowSundae = findViewById<android.widget.LinearLayout>(R.id.rowSundae)
         val tvEmptyCart = findViewById<TextView>(R.id.tvEmptyCart)
 
         val tvCartQtyChicken = findViewById<TextView>(R.id.tvCartQtyChicken)
+        val tvCartQtyBurger = findViewById<TextView>(R.id.tvCartQtyBurger)
         val tvCartQtyFries = findViewById<TextView>(R.id.tvCartQtyFries)
         val tvCartQtyDrink = findViewById<TextView>(R.id.tvCartQtyDrink)
+        val tvCartQtySundae = findViewById<TextView>(R.id.tvCartQtySundae)
 
         val btnAddCartChicken = findViewById<Button>(R.id.btnAddCartChicken)
         val btnMinusCartChicken = findViewById<Button>(R.id.btnMinusCartChicken)
+        val btnAddCartBurger = findViewById<Button>(R.id.btnAddCartBurger)
+        val btnMinusCartBurger = findViewById<Button>(R.id.btnMinusCartBurger)
         val btnAddCartFries = findViewById<Button>(R.id.btnAddCartFries)
         val btnMinusCartFries = findViewById<Button>(R.id.btnMinusCartFries)
         val btnAddCartDrink = findViewById<Button>(R.id.btnAddCartDrink)
         val btnMinusCartDrink = findViewById<Button>(R.id.btnMinusCartDrink)
+        val btnAddCartSundae = findViewById<Button>(R.id.btnAddCartSundae)
+        val btnMinusCartSundae = findViewById<Button>(R.id.btnMinusCartSundae)
 
         fun updateCartUI() {
-            val currentTotal = (qtyChicken * 85.00) + (qtyFries * 50.00) + (qtyDrink * 45.00)
+            val currentTotal = (qtyChicken * 85.00) + (qtyBurger * 90.00) + (qtyFries * 50.00) + (qtyDrink * 45.00) + (qtySundae * 35.00)
             tvFinalTotal.text = String.format(Locale.getDefault(), "₱ %.2f", currentTotal)
 
             if (qtyChicken > 0) {
@@ -52,6 +62,13 @@ class CartActivity : ComponentActivity() {
                 tvCartQtyChicken.text = qtyChicken.toString()
             } else {
                 rowChicken.visibility = android.view.View.GONE
+            }
+
+            if (qtyBurger > 0) {
+                rowBurger.visibility = android.view.View.VISIBLE
+                tvCartQtyBurger.text = qtyBurger.toString()
+            } else {
+                rowBurger.visibility = android.view.View.GONE
             }
 
             if (qtyFries > 0) {
@@ -68,7 +85,14 @@ class CartActivity : ComponentActivity() {
                 rowDrink.visibility = android.view.View.GONE
             }
 
-            if (qtyChicken == 0 && qtyFries == 0 && qtyDrink == 0) {
+            if (qtySundae > 0) {
+                rowSundae.visibility = android.view.View.VISIBLE
+                tvCartQtySundae.text = qtySundae.toString()
+            } else {
+                rowSundae.visibility = android.view.View.GONE
+            }
+
+            if (qtyChicken == 0 && qtyBurger == 0 && qtyFries == 0 && qtyDrink == 0 && qtySundae == 0) {
                 tvEmptyCart.visibility = android.view.View.VISIBLE
             } else {
                 tvEmptyCart.visibility = android.view.View.GONE
@@ -77,13 +101,17 @@ class CartActivity : ComponentActivity() {
 
         btnAddCartChicken.setOnClickListener { qtyChicken++; updateCartUI() }
         btnMinusCartChicken.setOnClickListener { if (qtyChicken > 0) qtyChicken--; updateCartUI() }
+        btnAddCartBurger.setOnClickListener { qtyBurger++; updateCartUI() }
+        btnMinusCartBurger.setOnClickListener { if (qtyBurger > 0) qtyBurger--; updateCartUI() }
         btnAddCartFries.setOnClickListener { qtyFries++; updateCartUI() }
         btnMinusCartFries.setOnClickListener { if (qtyFries > 0) qtyFries--; updateCartUI() }
         btnAddCartDrink.setOnClickListener { qtyDrink++; updateCartUI() }
         btnMinusCartDrink.setOnClickListener { if (qtyDrink > 0) qtyDrink--; updateCartUI() }
+        btnAddCartSundae.setOnClickListener { qtySundae++; updateCartUI() }
+        btnMinusCartSundae.setOnClickListener { if (qtySundae > 0) qtySundae--; updateCartUI() }
 
         btnConfirmOrder.setOnClickListener {
-            if (qtyChicken == 0 && qtyFries == 0 && qtyDrink == 0) {
+            if (qtyChicken == 0 && qtyBurger == 0 && qtyFries == 0 && qtyDrink == 0 && qtySundae == 0) {
                 android.widget.Toast.makeText(this, "Your cart is empty", android.widget.Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -98,7 +126,7 @@ class CartActivity : ComponentActivity() {
                 "Cash on Delivery (COD)"
             }
             val statusIntent = Intent(this, OrderStatusActivity::class.java)
-            val finalTotal = (qtyChicken * 85.00) + (qtyFries * 50.00) + (qtyDrink * 45.00)
+            val finalTotal = (qtyChicken * 85.00) + (qtyBurger * 90.00) + (qtyFries * 50.00) + (qtyDrink * 45.00) + (qtySundae * 35.00)
             statusIntent.putExtra("FINAL_TOTAL", finalTotal)
             statusIntent.putExtra("PAYMENT_METHOD", paymentMethod)
             startActivity(statusIntent)

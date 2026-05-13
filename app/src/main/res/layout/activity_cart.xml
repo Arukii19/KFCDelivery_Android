@@ -14,26 +14,27 @@
         android:elevation="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="8dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:src="@android:drawable/ic_menu_revert"
             app:tint="#FFFFFF"
             android:contentDescription="Back Button" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="sans-serif-black"
             android:text="Your Cart"
             android:textColor="#FFFFFF"
-            android:textSize="22sp" />
+            android:textSize="24sp"
+            android:letterSpacing="0.05" />
     </LinearLayout>
 
     <ScrollView
@@ -101,6 +102,54 @@
                         android:textStyle="bold" />
                     <Button
                         android:id="@+id/btnAddCartChicken"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#E4002B"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="+"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+
+                <!-- Burger Row -->
+                <LinearLayout
+                    android:id="@+id/rowBurger"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Zinger Burger (₱ 90.00)"
+                        android:textColor="#555555"
+                        android:textSize="16sp" />
+                    <Button
+                        android:id="@+id/btnMinusCartBurger"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#CCCCCC"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="-"
+                        android:textColor="#000000" />
+                    <TextView
+                        android:id="@+id/tvCartQtyBurger"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/btnAddCartBurger"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:backgroundTint="#E4002B"
@@ -197,6 +246,54 @@
                         android:textStyle="bold" />
                     <Button
                         android:id="@+id/btnAddCartDrink"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#E4002B"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="+"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+
+                <!-- Sundae Row -->
+                <LinearLayout
+                    android:id="@+id/rowSundae"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="KFC Sundae (₱ 35.00)"
+                        android:textColor="#555555"
+                        android:textSize="16sp" />
+                    <Button
+                        android:id="@+id/btnMinusCartSundae"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:backgroundTint="#CCCCCC"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        android:text="-"
+                        android:textColor="#000000" />
+                    <TextView
+                        android:id="@+id/tvCartQtySundae"
+                        android:layout_width="32dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/btnAddCartSundae"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:backgroundTint="#E4002B"

@@ -13,18 +13,27 @@
         android:layout_height="wrap_content"
         android:background="#E4002B"
         android:elevation="8dp"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/kfc_logo"
+            android:contentDescription="KFC Logo" />
+
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:text="My Profile"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
-            android:fontFamily="sans-serif-black" />
+            android:fontFamily="sans-serif-black"
+            android:letterSpacing="0.05" />
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
