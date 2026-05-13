@@ -33,9 +33,12 @@ class OrderStatusActivity : ComponentActivity() {
             finish()
         }
 
+        val orderId = intent.getStringExtra("ORDER_ID")
+
         val btnLeaveFeedback = findViewById<Button>(R.id.btnLeaveFeedback)
         btnLeaveFeedback.setOnClickListener {
             val intent = Intent(this, FeedbackActivity::class.java)
+            intent.putExtra("ORDER_ID", orderId)
             startActivity(intent)
         }
 

@@ -142,10 +142,11 @@ class CartActivity : ComponentActivity() {
 
             val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
             db.collection("orders").add(orderMap)
-                .addOnSuccessListener {
+                .addOnSuccessListener { documentReference ->
                     val statusIntent = Intent(this, OrderStatusActivity::class.java)
                     statusIntent.putExtra("FINAL_TOTAL", finalTotal)
                     statusIntent.putExtra("PAYMENT_METHOD", paymentMethod)
+                    statusIntent.putExtra("ORDER_ID", documentReference.id)
                     startActivity(statusIntent)
                     finish()
                 }

@@ -19,11 +19,25 @@ class FeedbackActivity : ComponentActivity() {
         }
 
         val ratingBar = findViewById<RatingBar>(R.id.ratingBar)
+        val etFeedbackComments = findViewById<android.widget.EditText>(R.id.etFeedbackComments)
         val btnSubmit = findViewById<Button>(R.id.btnSubmitFeedback)
+
+        val orderId = intent.getStringExtra("ORDER_ID")
 
         btnSubmit.setOnClickListener {
             val rating = ratingBar.rating
-            Toast.makeText(this, "Thank you for your $rating star feedback!", Toast.LENGTH_LONG).show()
+            val comment = etFeedbackComments.text.toString()
+
+            if (orderId != null) {
+                val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                db.collection("orders").document(orderId)
+                    .update(
+                        "feedbackRating", rating,
+                        "feedbackComment", comment
+                    )
+            }
+
+            Toast.makeText(this, "Thank you for your feedback!", Toast.LENGTH_LONG).show()
 
             val intent = Intent(this, DashboardActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
