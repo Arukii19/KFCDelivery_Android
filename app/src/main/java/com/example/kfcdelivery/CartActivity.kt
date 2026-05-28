@@ -2,159 +2,178 @@ package com.example.kfcdelivery
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
 import androidx.activity.ComponentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
 
 class CartActivity : ComponentActivity() {
+
+    private lateinit var cartAdapter: CartAdapter
+    private lateinit var tvFinalTotal: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cart)
 
         val btnBack = findViewById<ImageView>(R.id.btnBack)
-        btnBack.setOnClickListener {
-            finish()
-        }
+        btnBack.setOnClickListener { finish() }
 
-        var qtyChicken = intent.getIntExtra("QTY_CHICKEN", 0)
-        var qtyBurger = intent.getIntExtra("QTY_BURGER", 0)
-        var qtyFries = intent.getIntExtra("QTY_FRIES", 0)
-        var qtyDrink = intent.getIntExtra("QTY_DRINK", 0)
-        var qtySundae = intent.getIntExtra("QTY_SUNDAE", 0)
+        tvFinalTotal = findViewById(R.id.tvFinalTotal)
+
+        val rvCart = findViewById<RecyclerView>(R.id.rvCart)
+        rvCart.layoutManager = LinearLayoutManager(this)
+        cartAdapter = CartAdapter(CartManager.items, onQuantityChanged = { updateTotal() })
+        rvCart.adapter = cartAdapter
+
+        updateTotal()
+
+        val etLocation = findViewById<EditText>(R.id.etLocation)
+        val prefs = getSharedPreferences("KFCAppPrefs", MODE_PRIVATE)
+        val savedAddress = prefs.getString("CUST_ADDR", "") ?: ""
+        if (savedAddress.isNotEmpty()) etLocation.setText(savedAddress)
+
+        val rgPaymentMethod = findViewById<RadioGroup>(R.id.rgPaymentMethod)
 
         val btnConfirmOrder = findViewById<Button>(R.id.btnConfirmOrder)
-        val rgPaymentMethod = findViewById<android.widget.RadioGroup>(R.id.rgPaymentMethod)
-        val tvFinalTotal = findViewById<TextView>(R.id.tvFinalTotal)
-        val etLocation = findViewById<android.widget.EditText>(R.id.etLocation)
-
-        val rowChicken = findViewById<android.widget.LinearLayout>(R.id.rowChicken)
-        val rowBurger = findViewById<android.widget.LinearLayout>(R.id.rowBurger)
-        val rowFries = findViewById<android.widget.LinearLayout>(R.id.rowFries)
-        val rowDrink = findViewById<android.widget.LinearLayout>(R.id.rowDrink)
-        val rowSundae = findViewById<android.widget.LinearLayout>(R.id.rowSundae)
-        val tvEmptyCart = findViewById<TextView>(R.id.tvEmptyCart)
-
-        val tvCartQtyChicken = findViewById<TextView>(R.id.tvCartQtyChicken)
-        val tvCartQtyBurger = findViewById<TextView>(R.id.tvCartQtyBurger)
-        val tvCartQtyFries = findViewById<TextView>(R.id.tvCartQtyFries)
-        val tvCartQtyDrink = findViewById<TextView>(R.id.tvCartQtyDrink)
-        val tvCartQtySundae = findViewById<TextView>(R.id.tvCartQtySundae)
-
-        val btnAddCartChicken = findViewById<Button>(R.id.btnAddCartChicken)
-        val btnMinusCartChicken = findViewById<Button>(R.id.btnMinusCartChicken)
-        val btnAddCartBurger = findViewById<Button>(R.id.btnAddCartBurger)
-        val btnMinusCartBurger = findViewById<Button>(R.id.btnMinusCartBurger)
-        val btnAddCartFries = findViewById<Button>(R.id.btnAddCartFries)
-        val btnMinusCartFries = findViewById<Button>(R.id.btnMinusCartFries)
-        val btnAddCartDrink = findViewById<Button>(R.id.btnAddCartDrink)
-        val btnMinusCartDrink = findViewById<Button>(R.id.btnMinusCartDrink)
-        val btnAddCartSundae = findViewById<Button>(R.id.btnAddCartSundae)
-        val btnMinusCartSundae = findViewById<Button>(R.id.btnMinusCartSundae)
-
-        fun updateCartUI() {
-            val currentTotal = (qtyChicken * 85.00) + (qtyBurger * 90.00) + (qtyFries * 50.00) + (qtyDrink * 45.00) + (qtySundae * 35.00)
-            tvFinalTotal.text = String.format(Locale.getDefault(), "₱ %.2f", currentTotal)
-
-            if (qtyChicken > 0) {
-                rowChicken.visibility = android.view.View.VISIBLE
-                tvCartQtyChicken.text = qtyChicken.toString()
-            } else {
-                rowChicken.visibility = android.view.View.GONE
-            }
-
-            if (qtyBurger > 0) {
-                rowBurger.visibility = android.view.View.VISIBLE
-                tvCartQtyBurger.text = qtyBurger.toString()
-            } else {
-                rowBurger.visibility = android.view.View.GONE
-            }
-
-            if (qtyFries > 0) {
-                rowFries.visibility = android.view.View.VISIBLE
-                tvCartQtyFries.text = qtyFries.toString()
-            } else {
-                rowFries.visibility = android.view.View.GONE
-            }
-
-            if (qtyDrink > 0) {
-                rowDrink.visibility = android.view.View.VISIBLE
-                tvCartQtyDrink.text = qtyDrink.toString()
-            } else {
-                rowDrink.visibility = android.view.View.GONE
-            }
-
-            if (qtySundae > 0) {
-                rowSundae.visibility = android.view.View.VISIBLE
-                tvCartQtySundae.text = qtySundae.toString()
-            } else {
-                rowSundae.visibility = android.view.View.GONE
-            }
-
-            if (qtyChicken == 0 && qtyBurger == 0 && qtyFries == 0 && qtyDrink == 0 && qtySundae == 0) {
-                tvEmptyCart.visibility = android.view.View.VISIBLE
-            } else {
-                tvEmptyCart.visibility = android.view.View.GONE
-            }
-        }
-
-        btnAddCartChicken.setOnClickListener { qtyChicken++; updateCartUI() }
-        btnMinusCartChicken.setOnClickListener { if (qtyChicken > 0) qtyChicken--; updateCartUI() }
-        btnAddCartBurger.setOnClickListener { qtyBurger++; updateCartUI() }
-        btnMinusCartBurger.setOnClickListener { if (qtyBurger > 0) qtyBurger--; updateCartUI() }
-        btnAddCartFries.setOnClickListener { qtyFries++; updateCartUI() }
-        btnMinusCartFries.setOnClickListener { if (qtyFries > 0) qtyFries--; updateCartUI() }
-        btnAddCartDrink.setOnClickListener { qtyDrink++; updateCartUI() }
-        btnMinusCartDrink.setOnClickListener { if (qtyDrink > 0) qtyDrink--; updateCartUI() }
-        btnAddCartSundae.setOnClickListener { qtySundae++; updateCartUI() }
-        btnMinusCartSundae.setOnClickListener { if (qtySundae > 0) qtySundae--; updateCartUI() }
-
         btnConfirmOrder.setOnClickListener {
-            if (qtyChicken == 0 && qtyBurger == 0 && qtyFries == 0 && qtyDrink == 0 && qtySundae == 0) {
-                android.widget.Toast.makeText(this, "Your cart is empty", android.widget.Toast.LENGTH_SHORT).show()
+            if (CartManager.items.isEmpty()) {
+                Toast.makeText(this, "Your cart is empty", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if (etLocation.text.toString().trim().isEmpty()) {
-                android.widget.Toast.makeText(this, "No address detected", android.widget.Toast.LENGTH_SHORT).show()
+
+            val address = etLocation.text.toString().trim()
+            if (address.isEmpty()) {
+                Toast.makeText(this, "Please enter a delivery address", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            
-            val paymentMethod = if (rgPaymentMethod.checkedRadioButtonId == R.id.rbOnline) {
-                "Online Payment"
-            } else {
-                "Cash on Delivery (COD)"
+
+            val paymentMethod = when (rgPaymentMethod.checkedRadioButtonId) {
+                R.id.rbGCash -> "GCash"
+                else -> "Cash"
             }
-            val finalTotal = (qtyChicken * 85.00) + (qtyBurger * 90.00) + (qtyFries * 50.00) + (qtyDrink * 45.00) + (qtySundae * 35.00)
+
+            val custId = prefs.getString("CUST_ID", "") ?: ""
+
+            if (custId.isEmpty()) {
+                Toast.makeText(this, "Please log in to place an order", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, MainActivity::class.java))
+                return@setOnClickListener
+            }
+
+            btnConfirmOrder.isEnabled = false
+            btnConfirmOrder.text = "Placing Order..."
+
+            val orderItems = CartManager.items.map { item ->
+                hashMapOf(
+                    "menuItemId" to item.menuItemId,
+                    "name" to item.name,
+                    "quantity" to item.quantity,
+                    "price" to item.price,
+                    "subtotal" to (item.price * item.quantity)
+                )
+            }
+
+            val orderNum = "KFC-${System.currentTimeMillis() % 100000}"
+
+            val finalTotal = CartManager.getTotal()
 
             val orderMap = hashMapOf(
-                "qtyChicken" to qtyChicken,
-                "qtyBurger" to qtyBurger,
-                "qtyFries" to qtyFries,
-                "qtyDrink" to qtyDrink,
-                "qtySundae" to qtySundae,
-                "totalPrice" to finalTotal,
-                "address" to etLocation.text.toString(),
-                "paymentMethod" to paymentMethod,
+                "orderNum" to orderNum,
+                "customerId" to custId,
+                "riderId" to null,
+                "items" to orderItems,
+                "total" to finalTotal,
                 "status" to "Pending",
-                "timestamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                "deliveryAddress" to address,
+                "paymentMethod" to paymentMethod,
+                "paymentStatus" to "Pending",
+                "cancelReason" to null,
+                "createdAt" to FieldValue.serverTimestamp()
             )
 
-            val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+            val db = FirebaseFirestore.getInstance()
             db.collection("orders").add(orderMap)
-                .addOnSuccessListener { documentReference ->
-                    val statusIntent = Intent(this, OrderStatusActivity::class.java)
-                    statusIntent.putExtra("FINAL_TOTAL", finalTotal)
-                    statusIntent.putExtra("PAYMENT_METHOD", paymentMethod)
-                    statusIntent.putExtra("ORDER_ID", documentReference.id)
-                    startActivity(statusIntent)
+                .addOnSuccessListener { docRef ->
+                    CartManager.clear()
+                    val intent = Intent(this, OrderStatusActivity::class.java)
+                    intent.putExtra("ORDER_ID", docRef.id)
+                    intent.putExtra("ORDER_NUM", orderNum)
+                    intent.putExtra("FINAL_TOTAL", finalTotal)
+                    intent.putExtra("PAYMENT_METHOD", paymentMethod)
+                    startActivity(intent)
                     finish()
                 }
                 .addOnFailureListener { e ->
-                    android.widget.Toast.makeText(this, "Order failed to save: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                    btnConfirmOrder.isEnabled = true
+                    btnConfirmOrder.text = "Confirm Order"
+                    Toast.makeText(this, "Order failed: ${e.message}", Toast.LENGTH_LONG).show()
                 }
         }
-
-        updateCartUI()
     }
+
+    private fun updateTotal() {
+        tvFinalTotal.text = String.format(Locale.getDefault(), "₱ %.2f", CartManager.getTotal())
+    }
+}
+
+class CartAdapter(
+    private val items: MutableList<CartItem>,
+    private val onQuantityChanged: () -> Unit
+) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
+
+    inner class CartViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvName: TextView = view.findViewById(R.id.tvCartItemName)
+        val tvPrice: TextView = view.findViewById(R.id.tvCartItemPrice)
+        val tvQty: TextView = view.findViewById(R.id.tvCartItemQty)
+        val btnAdd: Button = view.findViewById(R.id.btnCartAdd)
+        val btnMinus: Button = view.findViewById(R.id.btnCartMinus)
+        val btnRemove: ImageView = view.findViewById(R.id.btnCartRemove)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_cart, parent, false)
+        return CartViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: CartViewHolder, position: Int) {
+        val item = items[position]
+        holder.tvName.text = item.name
+        holder.tvPrice.text = String.format(Locale.getDefault(), "₱ %.2f", item.price * item.quantity)
+        holder.tvQty.text = item.quantity.toString()
+
+        holder.btnAdd.setOnClickListener {
+            CartManager.changeQuantity(item.menuItemId, 1)
+            notifyItemChanged(position)
+            onQuantityChanged()
+        }
+
+        holder.btnMinus.setOnClickListener {
+            if (item.quantity > 1) {
+                CartManager.changeQuantity(item.menuItemId, -1)
+                notifyItemChanged(position)
+                onQuantityChanged()
+            } else {
+                CartManager.removeItem(item.menuItemId)
+                notifyItemRemoved(position)
+                notifyItemRangeChanged(position, items.size)
+                onQuantityChanged()
+            }
+        }
+
+        holder.btnRemove.setOnClickListener {
+            CartManager.removeItem(item.menuItemId)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, items.size)
+            onQuantityChanged()
+        }
+    }
+
+    override fun getItemCount() = items.size
 }

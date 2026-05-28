@@ -4,60 +4,75 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val registerButton = findViewById<Button>(R.id.Register)
-        registerButton.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+        val etLogin = findViewById<EditText>(R.id.newPhone)
+        val etPassword = findViewById<EditText>(R.id.newPassword)
+        val btnLogin = findViewById<Button>(R.id.Login)
+        val btnRegister = findViewById<Button>(R.id.Register)
+        val tvBack = findViewById<TextView>(R.id.tvBackToRoles)
+
+        tvBack?.setOnClickListener { finish() }
+
+        // Pre-fill if coming back from registration
+        val registeredLogin = intent.getStringExtra("REGISTERED_LOGIN")
+        if (!registeredLogin.isNullOrEmpty()) {
+            etLogin.setText(registeredLogin)
+            Toast.makeText(this, "Registration successful! Please log in.", Toast.LENGTH_SHORT).show()
         }
 
-        val emailEditText = findViewById<EditText>(R.id.Email)
-        
-        val registeredEmail = intent.getStringExtra("REGISTERED_EMAIL")
-        if (!registeredEmail.isNullOrEmpty()) {
-            emailEditText.setText(registeredEmail)
-            android.widget.Toast.makeText(this, "Registration successful! Please log in.", android.widget.Toast.LENGTH_SHORT).show()
+        btnRegister.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
-        val loginButton = findViewById<Button>(R.id.Login)
-        val passwordEditText = findViewById<EditText>(R.id.newPassword)
-        
-        loginButton.setOnClickListener {
-            val email = emailEditText.text.toString()
-            val password = passwordEditText.text.toString()
-            
+        btnLogin.setOnClickListener {
+            val email = etLogin.text.toString().trim()
+            val password = etPassword.text.toString().trim()
+
             if (email.isEmpty() || password.isEmpty()) {
-                android.widget.Toast.makeText(this, "Please enter email and password", android.widget.Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter your email and password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-            db.collection("users").document(email).get()
-                .addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        val savedPassword = document.getString("password")
+            val db = FirebaseFirestore.getInstance()
+            db.collection("customers")
+                .whereEqualTo("email", email)
+                .get()
+                .addOnSuccessListener { docs ->
+                    if (!docs.isEmpty) {
+                        val doc = docs.documents[0]
+                        val savedPassword = doc.getString("password")
                         if (savedPassword == password) {
-                            val savedName = document.getString("firstName") ?: email.substringBefore("@")
-                            
+                            val prefs = getSharedPreferences("KFCAppPrefs", MODE_PRIVATE)
+                            prefs.edit()
+                                .putString("CUST_ID", doc.id)
+                                .putString("CUST_FNAME", doc.getString("firstName") ?: "")
+                                .putString("CUST_LNAME", doc.getString("lastName") ?: "")
+                                .putString("CUST_PHONE", doc.getString("phone") ?: "")
+                                .putString("CUST_EMAIL", doc.getString("email") ?: "")
+                                .putString("CUST_ADDR", doc.getString("address") ?: "")
+                                .apply()
+
                             val intent = Intent(this, DashboardActivity::class.java)
-                            intent.putExtra("USER_NAME", savedName)
-                            intent.putExtra("USER_EMAIL", email)
                             startActivity(intent)
+                            finish()
                         } else {
-                            android.widget.Toast.makeText(this, "Invalid Password", android.widget.Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Incorrect password", Toast.LENGTH_SHORT).show()
                         }
                     } else {
-                        android.widget.Toast.makeText(this, "User not found. Please register.", android.widget.Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "No account found with this email", Toast.LENGTH_SHORT).show()
                     }
                 }
                 .addOnFailureListener { e ->
-                    android.widget.Toast.makeText(this, "Login failed: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Login failed: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
         }
     }

@@ -104,13 +104,41 @@
             </LinearLayout>
 
             <EditText
-                android:id="@+id/Email"
+                android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/bg_rounded_input"
                 android:hint="Email Address"
-                android:inputType="textEmailAddress"
+                android:importantForAutofill="no"
+                android:inputType="textEmailAddress|textNoSuggestions"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="#000000"
+                android:textColorHint="#999999" />
+
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_rounded_input"
+                android:hint="Phone Number (e.g. 09XXXXXXXXX)"
+                android:inputType="phone"
+                android:maxLength="11"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="#000000"
+                android:textColorHint="#999999" />
+
+            <EditText
+                android:id="@+id/etAddress"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_rounded_input"
+                android:hint="Default Delivery Address"
+                android:inputType="textPostalAddress"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="#000000"
@@ -122,8 +150,9 @@
                 android:layout_height="56dp"
                 android:layout_marginBottom="32dp"
                 android:background="@drawable/bg_rounded_input"
-                android:hint="Password"
-                android:inputType="textPassword"
+                android:hint="Password (min 6 characters)"
+                android:importantForAutofill="no"
+                android:inputType="textPassword|textNoSuggestions"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="#000000"

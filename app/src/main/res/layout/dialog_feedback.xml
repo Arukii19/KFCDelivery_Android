@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="How was your food?"
+        android:textSize="20sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:numStars="5"
+        android:stepSize="1"
+        android:rating="5"
+        android:progressTint="#FFC107"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/etFeedbackComment"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#F5F5F5"
+        android:gravity="top|start"
+        android:hint="Leave a comment (optional)..."
+        android:inputType="textMultiLine"
+        android:padding="12dp"
+        android:textColor="#333333"
+        android:textColorHint="#999999"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnSubmitFeedback"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:backgroundTint="#E4002B"
+        android:text="Submit Feedback"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"/>
+</LinearLayout>
