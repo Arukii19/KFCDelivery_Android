@@ -60,6 +60,9 @@ class CartActivity : ComponentActivity() {
             }
 
             val custId = prefs.getString("CUST_ID", "") ?: ""
+            val custFName = prefs.getString("CUST_FNAME", "") ?: ""
+            val custLName = prefs.getString("CUST_LNAME", "") ?: ""
+            val customerName = "$custFName $custLName".trim().ifEmpty { "Customer" }
 
             if (custId.isEmpty()) {
                 Toast.makeText(this, "Please log in to place an order", Toast.LENGTH_SHORT).show()
@@ -87,6 +90,7 @@ class CartActivity : ComponentActivity() {
             val orderMap = hashMapOf(
                 "orderNum" to orderNum,
                 "customerId" to custId,
+                "customerName" to customerName,
                 "riderId" to null,
                 "items" to orderItems,
                 "total" to finalTotal,

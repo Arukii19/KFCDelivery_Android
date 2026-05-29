@@ -42,6 +42,11 @@ class RegisterActivity : ComponentActivity() {
                 Toast.makeText(this, "Phone number must be 11 digits", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            
+            if (!email.lowercase().endsWith(".com")) {
+                Toast.makeText(this, "Please enter a valid email ending with .com", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             if (password.length < 6) {
                 Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()

@@ -103,8 +103,18 @@
                 android:id="@+id/btnTabRiders"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
                 android:backgroundTint="#F0F0F0"
                 android:text="Riders"
+                android:textAllCaps="false"
+                android:textColor="#333333" />
+
+            <Button
+                android:id="@+id/btnTabHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:backgroundTint="#F0F0F0"
+                android:text="History"
                 android:textAllCaps="false"
                 android:textColor="#333333" />
         </LinearLayout>
@@ -207,6 +217,34 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAdminRiders"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="16dp" />
+    </LinearLayout>
+
+    <!-- History Layout -->
+    <LinearLayout
+        android:id="@+id/layoutAdminHistory"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabScrollView">
+
+        <TextView
+            android:id="@+id/tvNoAdminHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="No completed orders found."
+            android:textColor="#888888"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvAdminHistory"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"

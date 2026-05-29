@@ -82,17 +82,20 @@ class AdminDashboardActivity : ComponentActivity() {
         val btnTabOrders = findViewById<Button>(R.id.btnTabOrders)
         val btnTabStaff = findViewById<Button>(R.id.btnTabStaff)
         val btnTabRiders = findViewById<Button>(R.id.btnTabRiders)
+        val btnTabHistory = findViewById<Button>(R.id.btnTabHistory)
         
         val layoutMenu = findViewById<LinearLayout>(R.id.layoutAdminMenu)
         val layoutOrders = findViewById<LinearLayout>(R.id.layoutAdminOrders)
         val layoutStaff = findViewById<android.widget.RelativeLayout>(R.id.layoutAdminStaff)
         val layoutRiders = findViewById<LinearLayout>(R.id.layoutAdminRiders)
+        val layoutHistory = findViewById<LinearLayout>(R.id.layoutAdminHistory)
 
         fun showTab(tab: String) {
             layoutMenu.visibility = if (tab == "menu") View.VISIBLE else View.GONE
             layoutOrders.visibility = if (tab == "orders") View.VISIBLE else View.GONE
             layoutStaff.visibility = if (tab == "staff") View.VISIBLE else View.GONE
             layoutRiders.visibility = if (tab == "riders") View.VISIBLE else View.GONE
+            layoutHistory.visibility = if (tab == "history") View.VISIBLE else View.GONE
             
             btnTabMenu.backgroundTintList = ColorStateList.valueOf(if (tab == "menu") 0xFFE4002B.toInt() else 0xFFF0F0F0.toInt())
             btnTabMenu.setTextColor(if (tab == "menu") 0xFFFFFFFF.toInt() else 0xFF333333.toInt())
@@ -105,17 +108,23 @@ class AdminDashboardActivity : ComponentActivity() {
             
             btnTabRiders.backgroundTintList = ColorStateList.valueOf(if (tab == "riders") 0xFFE4002B.toInt() else 0xFFF0F0F0.toInt())
             btnTabRiders.setTextColor(if (tab == "riders") 0xFFFFFFFF.toInt() else 0xFF333333.toInt())
+            
+            btnTabHistory.backgroundTintList = ColorStateList.valueOf(if (tab == "history") 0xFFE4002B.toInt() else 0xFFF0F0F0.toInt())
+            btnTabHistory.setTextColor(if (tab == "history") 0xFFFFFFFF.toInt() else 0xFF333333.toInt())
         }
 
         btnTabMenu.setOnClickListener { showTab("menu") }
         btnTabOrders.setOnClickListener { showTab("orders") }
         btnTabStaff.setOnClickListener { showTab("staff") }
         btnTabRiders.setOnClickListener { showTab("riders") }
+        btnTabHistory.setOnClickListener { showTab("history") }
 
         val rvMenu = findViewById<RecyclerView>(R.id.rvAdminMenu)
         rvMenu.layoutManager = LinearLayoutManager(this)
         val rvOrders = findViewById<RecyclerView>(R.id.rvAdminOrders)
         rvOrders.layoutManager = LinearLayoutManager(this)
+        val rvHistory = findViewById<RecyclerView>(R.id.rvAdminHistory)
+        rvHistory.layoutManager = LinearLayoutManager(this)
 
         // Menu Listener
         menuListener = db.collection("menuItems")
@@ -161,7 +170,7 @@ class AdminDashboardActivity : ComponentActivity() {
                     AdminOrder(
                         id = doc.id,
                         orderNum = doc.getString("orderNum") ?: doc.id,
-                        customerName = doc.getString("customerId") ?: "Customer",
+                        customerName = doc.getString("customerName") ?: doc.getString("customerId") ?: "Customer",
                         status = doc.getString("status") ?: "Pending",
                         items = items,
                         total = doc.getDouble("total") ?: 0.0
@@ -176,6 +185,34 @@ class AdminDashboardActivity : ComponentActivity() {
                     tvEmpty.visibility = View.GONE
                     rvOrders.visibility = View.VISIBLE
                     rvOrders.adapter = AdminOrderAdapter(activeOrders) { order, action ->
+                        handleOrderAction(order, action)
+                    }
+                }
+
+                val historyOrders = docs.filter { doc ->
+                    val status = doc.getString("status") ?: ""
+                    status == "Delivered" || status == "Canceled"
+                }.map { doc ->
+                    @Suppress("UNCHECKED_CAST")
+                    val items = doc.get("items") as? List<Map<String, Any>> ?: emptyList()
+                    AdminOrder(
+                        id = doc.id,
+                        orderNum = doc.getString("orderNum") ?: doc.id,
+                        customerName = doc.getString("customerName") ?: doc.getString("customerId") ?: "Customer",
+                        status = doc.getString("status") ?: "Delivered",
+                        items = items,
+                        total = doc.getDouble("total") ?: 0.0
+                    )
+                }.sortedByDescending { it.id }
+
+                val tvEmptyHistory = findViewById<TextView>(R.id.tvNoAdminHistory)
+                if (historyOrders.isEmpty()) {
+                    tvEmptyHistory.visibility = View.VISIBLE
+                    rvHistory.visibility = View.GONE
+                } else {
+                    tvEmptyHistory.visibility = View.GONE
+                    rvHistory.visibility = View.VISIBLE
+                    rvHistory.adapter = AdminOrderAdapter(historyOrders) { order, action ->
                         handleOrderAction(order, action)
                     }
                 }
@@ -248,7 +285,36 @@ class AdminDashboardActivity : ComponentActivity() {
                 }
         } else if (action == "assign") {
             showAssignRiderDialog(order)
+        } else if (action == "view") {
+            showOrderDetailsDialog(order)
         }
+    }
+
+    private fun showOrderDetailsDialog(order: AdminOrder) {
+        val itemsText = order.items.joinToString("\n") { item ->
+            val qty = (item["quantity"] as? Long)?.toInt() ?: 1
+            val name = item["name"] as? String ?: "Item"
+            "  • ${qty}x $name"
+        }
+
+        val details = """
+            Order Number: #${order.orderNum}
+            Status: ${order.status}
+            Total Paid: ₱${order.total}
+            
+            Customer: ${order.customerName}
+            
+            Items Ordered:
+            $itemsText
+        """.trimIndent()
+
+        AlertDialog.Builder(this)
+            .setTitle("Digital Receipt")
+            .setMessage(details)
+            .setPositiveButton("Close") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun showAssignRiderDialog(order: AdminOrder) {
@@ -399,6 +465,11 @@ class AdminDashboardActivity : ComponentActivity() {
             val password = passwordInput.text.toString().trim()
 
             if (name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
+                if (!email.lowercase().endsWith(".com")) {
+                    Toast.makeText(this, "Please enter a valid email ending with .com", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
                 val newStaff = hashMapOf(
                     "firstName" to name,
                     "lastName" to "",
@@ -534,13 +605,21 @@ class AdminOrderAdapter(
         holder.tvItems.text = itemsText.ifEmpty { "No items" }
 
         if (order.status == "Pending") {
+            holder.btnAction.visibility = View.VISIBLE
             holder.btnAction.text = "Accept Order"
             holder.btnAction.backgroundTintList = ColorStateList.valueOf(0xFFE4002B.toInt())
             holder.btnAction.setOnClickListener { onAction(order, "accept") }
         } else if (order.status == "Ready for Pickup") {
+            holder.btnAction.visibility = View.VISIBLE
             holder.btnAction.text = "Assign Rider"
             holder.btnAction.backgroundTintList = ColorStateList.valueOf(0xFF10B981.toInt())
             holder.btnAction.setOnClickListener { onAction(order, "assign") }
+        } else {
+            // Delivered or Canceled (History)
+            holder.btnAction.visibility = View.VISIBLE
+            holder.btnAction.text = "View Details"
+            holder.btnAction.backgroundTintList = ColorStateList.valueOf(0xFF888888.toInt()) // Gray
+            holder.btnAction.setOnClickListener { onAction(order, "view") }
         }
     }
 
